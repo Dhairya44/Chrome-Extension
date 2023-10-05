@@ -19,6 +19,9 @@
         "16": "images/icon16.png"
       }
     },
+    "externally_connectable": {
+      "matches": ["*://localhost/*", "*://wilp-proctor-frontend-k7yap.ondigitalocean.app/*"]
+    },
     "icons": {
       "16": "images/icon16.png"
     },

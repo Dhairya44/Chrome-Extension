@@ -6,17 +6,28 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 const allowedUrls = ["localhost:8000", "https://wilp-proctor-frontend-k7yap.ondigitalocean.app", "chrome://", "https://in.mathworks.com/", "https://www.mathworks.com/", "accounts.google.com"]
+const devOrDep = "wilp-proctor-frontend-k7yap.ondigitalocean.app"
+// const devOrDep = "localhost:8000"
 
 function injectTheScript() {
   chrome.tabs.query({}, function(tabs) {
     for(let i = 0; i<tabs.length; i++){
-      if(tabs[i].favIconUrl && tabs[i].favIconUrl.includes("wilp-proctor-frontend-k7yap.ondigitalocean.app"))
-      chrome.scripting.executeScript({
-        target : {tabId : tabs[i].id},
-        files : [ "content_wilp.js" ]
-          });
+      if(tabs[i].favIconUrl && tabs[i].favIconUrl.includes(devOrDep))
+        chrome.scripting.executeScript({
+          target : {tabId : tabs[i].id},
+          files : [ "content_wilp.js" ]
+            });
     }  
   });
+}
+
+function enableExtension(tab){
+  if(tab.url.includes(devOrDep)){
+    chrome.scripting.executeScript({
+      target : {tabId : tab.id},
+      files : [ "content_index_wilp.js" ]
+        });
+  }
 }
 
 function showErrorOnSite(id){
@@ -33,20 +44,41 @@ function checkIfBlocked(tab){
     if(tab.url.includes(allowedUrls[i]))
       return;
   }
-  injectTheScript()
-  showErrorOnSite(tab.id);
+  chrome.tabs.query({}, function(tabs) {
+    for(let i = 0; i<tabs.length; i++){
+      if(tabs[i].favIconUrl && tabs[i].favIconUrl.includes(devOrDep)){
+        injectTheScript()
+        showErrorOnSite(tab.id);
+      }
+    }  
+  });
 }
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, function (tab) {
+      enableExtension(tab)
       checkIfBlocked(tab)
   });
 });
 
 chrome.tabs.onCreated.addListener((tab) => {
-    checkIfBlocked(tab)
+  enableExtension(tab)  
+  checkIfBlocked(tab)
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    checkIfBlocked(tab)
+  enableExtension(tab)  
+  checkIfBlocked(tab)
 });
+
+chrome.runtime.onMessageExternal.addListener(
+  function(request, sender, sendResponse) {
+      if (request) {
+          if (request.message) {
+              if (request.message == "version") {
+                  sendResponse({version: 1.0});
+              }
+          }
+      }
+      return true;
+  });
