@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 });
 
-const allowedUrls = ["localhost:8000", "https://wilp-proctor-frontend-k7yap.ondigitalocean.app", "chrome://", "https://in.mathworks.com/", "https://www.mathworks.com/", "accounts.google.com"]
+const allowedUrls = ["localhost:8000", "https://wilp-proctor-frontend-k7yap.ondigitalocean.app" , "https://in.mathworks.com/", "https://www.mathworks.com/", "accounts.google.com"]
 const devOrDep = "wilp-proctor-frontend-k7yap.ondigitalocean.app"
 // const devOrDep = "localhost:8000"
 
@@ -53,6 +53,22 @@ function checkIfBlocked(tab){
     }  
   });
 }
+chrome.windows.onFocusChanged.addListener(function(windowId) {
+  if (windowId === -1) {
+       injectTheScript()
+      console.log("Window is not focused");
+  } else {
+      chrome.windows.get(windowId, function(chromeWindow) {
+          if (chromeWindow.state === "minimized") {
+              injectTheScript()
+              console.log("Window is minimized");
+          } 
+          else{
+            console.log("Window is maximized");
+          }
+      });
+  }
+});
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
   chrome.tabs.get(activeInfo.tabId, function (tab) {
