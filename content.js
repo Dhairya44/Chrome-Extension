@@ -1,12 +1,3 @@
-// List of allowed websites
-const allowedWebsites = ["https://www.google.com/", "https://www.facebook.com/"];
-
-// Get the current URL
-const currentURL = window.location.href;
-
-// Check if the current URL is in the allowed list
-if (!allowedWebsites.includes(currentURL)) {
-  // Create a div to overlay the entire screen
   const overlayDiv = document.createElement("div");
   overlayDiv.style.position = "fixed";
   overlayDiv.style.top = "0";
@@ -31,4 +22,3 @@ if (!allowedWebsites.includes(currentURL)) {
   messageDiv.style.color = "white"; // Set text color to white for better visibility on red background
   messageDiv.innerHTML = 'You have been flagged, please go back to the <a href="https://www.google.com/">exam</a> to avoid being flagged';
   overlayDiv.appendChild(messageDiv);
-}

@@ -4,7 +4,14 @@
     "version": "1.0",
     "description": "Block access to certain websites",
     "permissions": [
-      "activeTab"
+      "activeTab",
+      "tabs",
+      "scripting",
+      "webNavigation"
+    ],
+    "host_permissions": [
+      "http://*/*",
+      "https://*/*"
     ],
     "action": {
       "default_popup": "popup.html",
@@ -15,15 +22,9 @@
     "icons": {
       "16": "images/icon16.png"
     },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ],
+    "content_scripts": [],
     "background": {
       "service_worker": "background.js"
-    },
-    "permissions": ["activeTab"]
+    }
   }
   
